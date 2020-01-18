@@ -199,7 +199,7 @@ class headOperator(Operator):
                     
 
         for m in move:
-            obj.rotation_euler = [m[2], m[1], m[0]]
+            obj.rotation_euler = [-m[2], -m[1], m[0]]
             obj.keyframe_insert('rotation_euler', frame=frame)
             frame += 1
                 
