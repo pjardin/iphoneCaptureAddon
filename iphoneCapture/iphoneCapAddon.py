@@ -16,6 +16,7 @@ import bpy
 from bpy.types import Panel, Operator,Property
 import json
 
+import bmesh
 
 blendShapesName = [
              #Left Eye
@@ -119,7 +120,7 @@ class blendShapesCheckOperator(Operator):
     bl_idname = "check.blendshapes"
     bl_label = "check/generate"
     
-    def execute(self, context): 
+    def execute(self, context):
 
         print("check/generate blendshapes")
         obj = context.object
@@ -132,7 +133,7 @@ class blendShapesCheckOperator(Operator):
             try:
                 sk1_data = shape_keys[bn].data
                 
-            except Exception: 
+            except Exception:
                 missingShapes.append(bn)
                 pass
         
@@ -148,14 +149,14 @@ class blendShapesCheckOperator(Operator):
             key.name = ms
         
         
-        return {'FINISHED'}   
+        return {'FINISHED'}
 
 class blendShapesApplyOperator(Operator):
     bl_idname = "apply.blendshapes"
     bl_label = "Apply"
     
     
-    def execute(self, context): 
+    def execute(self, context):
         print("apply blendshapes")
         
         # read file
@@ -178,13 +179,13 @@ class blendShapesApplyOperator(Operator):
                 shape_keys[blendShap].keyframe_insert("value", frame=frame)
                 frame += 1
         
-        return {'FINISHED'}    
+        return {'FINISHED'}
 
 class headOperator(Operator):
     bl_idname = "apply.head"
     bl_label = "Head"
     
-    def execute(self, context): 
+    def execute(self, context):
         print("head")
         
         # read file
@@ -192,8 +193,8 @@ class headOperator(Operator):
             data=myfile.read()
         
         # parse file
-        move = json.loads(data) 
-        obj = context.object  
+        move = json.loads(data)
+        obj = context.object
         
         frame = 0;
                     
@@ -209,7 +210,7 @@ class leftEyeOperator(Operator):
     bl_idname = "apply.left_eye"
     bl_label = "LeftEye"
     
-    def execute(self, context): 
+    def execute(self, context):
         print("leftEye")
         
         # read file
@@ -217,7 +218,7 @@ class leftEyeOperator(Operator):
             data=myfile.read()
         
         # parse file
-        move = json.loads(data)   
+        move = json.loads(data)
         obj = context.object
         
         frame = 0;
@@ -228,13 +229,13 @@ class leftEyeOperator(Operator):
             obj.keyframe_insert('rotation_euler', frame=frame)
             frame += 1
         
-        return {'FINISHED'}    
+        return {'FINISHED'}
     
 class rightEyeOperator(Operator):
     bl_idname = "apply.right_eye"
     bl_label = "RightEye"
     
-    def execute(self, context): 
+    def execute(self, context):
         print("rightEye")
         
         # read file
@@ -242,8 +243,8 @@ class rightEyeOperator(Operator):
             data=myfile.read()
         
         # parse file
-        move = json.loads(data) 
-        obj = context.object  
+        move = json.loads(data)
+        obj = context.object
         
         frame = 0;
      
@@ -252,8 +253,156 @@ class rightEyeOperator(Operator):
             obj.keyframe_insert('rotation_euler', frame=frame)
             frame += 1
         
-        return {'FINISHED'}       
+        return {'FINISHED'}
     
+"""
+        motcap = [
+        "head"           : [],
+        
+        "leftFoot"       : [],
+        "leftHand"       : [],
+        "leftSholder"    : [],
+        
+        "rightFoot"      : [],
+        "rightHand"      : [],
+        "rightSholder"   : [],
+        
+        "root"           : []
+        ]
+
+"""
+boneMotcap = [
+"head"           ,
+
+"leftFoot"       ,
+"leftHand"       ,
+"leftSholder"    ,
+
+"rightFoot"      ,
+"rightHand"      ,
+"rightSholder"   ,
+
+"root"
+]
+
+
+class BodyAnchorMotionOperator(Operator):
+    bl_idname = "apply.body_anchor"
+    bl_label = "apply"
+    
+    def execute(self, context):
+        
+        obj = context.object
+        obj.rotation_mode = 'YZX'
+        
+        # read file
+        with open(G.folder_loc + 'motcap.json', 'r') as myfile:
+            data=myfile.read()
+        
+        # parse file
+        move = json.loads(data)
+        
+        frame = 0;
+        for f in move:
+            
+            joint = 0
+            
+            for b in f:
+                
+                if (joint < 15):
+                    bone = obj.pose.bones['joint'+ str(joint)]
+                      
+                    bone.location = [-b[0],b[1],-b[2]]
+                    bone.keyframe_insert('location', frame=frame)
+                    
+                    
+                elif (joint == 15):
+                    obj.location = [ -b[0],b[2],b[1]]
+                    obj.keyframe_insert('location', frame=frame)
+                elif (joint == 16):
+                    obj.rotation_euler = [b[2], -b[1], -b[0]]
+                    obj.keyframe_insert('rotation_euler', frame=frame)
+
+                joint +=1
+
+            frame += 1
+            
+        
+        """
+        if (obj.type == "ARMATURE"):
+            print("ARMATURE")
+            
+            for b in boneMotcap:
+                
+                frame = 0;
+                for m in move[b]:
+                
+                    bone = obj.pose.bones[b]
+                    
+                    bone.location = [m[0],m[1],m[2]]
+                    bone.rotation_euler = [m[3], m[4], m[5]]
+                    bone.keyframe_insert('rotation_euler', frame=frame)
+                    bone.keyframe_insert('location', frame=frame)
+                    frame += 1
+        """
+        return {'FINISHED'}
+
+
+class createMotoSkelOperator(Operator):
+    bl_idname = "apply.mot_skel"
+    bl_label = "Create"
+    
+    def execute(self, context):
+        print("skeleton")
+
+        bpy.ops.object.armature_add(enter_editmode=True, location=(0, 0, 0))
+        obj = context.object
+        obj.name = "motoSkel"
+        
+
+        
+        for bone in obj.data.edit_bones:
+            obj.data.edit_bones.remove(bone)
+        
+        edit_bones = obj.data.edit_bones
+        
+        boneSize = 16
+        
+        for i in range(0,boneSize):
+            b = edit_bones.new('joint'+ str(i))
+            b.head = (0, 0, 0.0)
+            b.tail = (0, 0, 0.1)
+            
+            
+        b = edit_bones.new('joint16')
+        b.head = (0.10054, -0.00119, -0.024963)
+        b.tail = (0.10054, --0.00119, 0.075037)
+        
+        b = edit_bones.new('joint17')
+        b.head = (-0.10054, -0.00119, -0.024963)
+        b.tail = (-0.10054, -0.00119, 0.075037)
+        
+        # exit edit mode to save bones so they can be used in pose mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+        
+        # make the custom bone shape
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.2, enter_editmode=False, location=(0.0, 0.0, 0.0))
+        
+        customShape = context.object
+        customShape.name = "jointCustomShape"
+
+        for f in customShape.data.polygons:
+            f.use_smooth = True
+
+        for i in range(0, (boneSize + 2)):
+            # use pose.bones for custom shape
+            obj.pose.bones['joint'+ str(i)].custom_shape = customShape
+            # use data.bones for show_wire
+            #obj.data.bones['bone2'].show_wire = True
+        
+    
+        return {'FINISHED'}
+
 
 class IphoneMotionCapture(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -268,7 +417,8 @@ class IphoneMotionCapture(bpy.types.Panel):
 
         obj = context.object
         row = layout.row()
-
+        
+        
         row.operator("get.folder")
         row = layout.row()
         
@@ -279,6 +429,11 @@ class IphoneMotionCapture(bpy.types.Panel):
         row.label(text="Active object is: " + obj.name)
         
         row = layout.row()
+        
+        row.label(text="------------ FACE ---------------------")
+        row = layout.row()
+
+
         
         row.label(text="BlendShapes:")
         row = layout.row()
@@ -294,6 +449,17 @@ class IphoneMotionCapture(bpy.types.Panel):
         row.operator("apply.left_eye")
         row = layout.row()
         row.operator("apply.right_eye")
+        
+        
+        
+        row = layout.row()
+        row.label(text="------------ BODY ---------------------")
+        row = layout.row()
+        row.operator("apply.body_anchor")
+        row = layout.row()
+
+        row.operator("apply.mot_skel")
+        row = layout.row()
 
 
 def register():
@@ -307,6 +473,10 @@ def register():
     bpy.utils.register_class(getFolderOperator)
     
     
+    bpy.utils.register_class(BodyAnchorMotionOperator)
+    bpy.utils.register_class(createMotoSkelOperator)
+    
+    
 def unregister():
     bpy.utils.unregister_class(IphoneMotionCapture)
     bpy.utils.unregister_class(headOperator)
@@ -316,6 +486,10 @@ def unregister():
     bpy.utils.unregister_class(blendShapesApplyOperator)
     
     bpy.utils.unregister_class(getFolderOperator)
+    
+    bpy.utils.unregister_class(BodyAnchorMotionOperator)
+    bpy.utils.unregister_class(createMotoSkelOperator)
+ 
     
 
 if __name__ == "__main__":
