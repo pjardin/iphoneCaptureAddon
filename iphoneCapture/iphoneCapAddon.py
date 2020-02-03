@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Iphone Motion Capture",
     "author": "Pascal Jardin",
-    "version": (0, 1),
+    "version": (0, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Iphone Motion Capture",
     "description": "get data from iphone and import to blender!",
@@ -17,6 +17,23 @@ from bpy.types import Panel, Operator,Property
 import json
 
 import bmesh
+from bpy import context
+
+
+
+from bpy.props import (StringProperty,
+                       BoolProperty,
+                       IntProperty,
+                       FloatProperty,
+                       FloatVectorProperty,
+                       EnumProperty,
+                       PointerProperty,
+                       )
+from bpy.types import (Panel,
+                       Menu,
+                       Operator,
+                       PropertyGroup,
+                       )
 
 blendShapesName = [
              #Left Eye
@@ -81,39 +98,32 @@ blendShapesName = [
              "tongueOut" ]
 
 
-class G:
+class G(PropertyGroup):
     folder_loc = "?"
 
-class getFolderOperator(Operator):
-
-    bl_idname = "get.folder"
-    bl_label = "get cap folder"
-    
-    #https://blender.stackexchange.com/questions/14738/use-filemanager-to-select-directory-instead-of-file
-    bl_options = {'REGISTER'}
-
-    # Define this to tell 'fileselect_add' that we want a directoy
-    directory = bpy.props.StringProperty(
-        name="Outdir Path",
-        description="Where I will save my stuff"
-        # subtype='DIR_PATH' is not needed to specify the selection mode.
-        # But this will be anyway a directory path.
+    startFrame: IntProperty(
+        name = "Start Frame",
+        description="Start Frame",
+        default = 0,
+        min = 0
         )
-
-    def execute(self, context):
-
-        print("Selected dir: '" + self.directory + "'")
-        G.folder_loc = self.directory
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        # Open browser, take reference to 'self' read the path to selected
-        # file, put path in predetermined self fields.
-        # See: https://docs.blender.org/api/current/bpy.types.WindowManager.html#bpy.types.WindowManager.fileselect_add
-        context.window_manager.fileselect_add(self)
-        # Tells Blender to hang on for the slow user input
-        return {'RUNNING_MODAL'}
-
+        
+    blendShapeType: EnumProperty(
+        name="Type",
+        description="Apply Data to attribute.",
+        items=[ ('iOS', "iOS", ""),
+                ('makeHuman', "makeHuman", ""),
+                ('custom', "custom", ""),
+               ]
+        )
+        
+    folderPath: StringProperty(
+        name = "Directory",
+        description="Choose a directory:",
+        default="",
+        maxlen=1024,
+        subtype='DIR_PATH'
+        )
 
 
 class blendShapesCheckOperator(Operator):
@@ -139,6 +149,12 @@ class blendShapesCheckOperator(Operator):
         
         print("missing:" + str(missingShapes))
         
+        try:
+            sk1_data = shape_keys["Basis"].data
+                
+        except Exception:
+            bpy.ops.object.shape_key_add(from_mix=False)
+
         
         #creates missing shape keys
         for ms in missingShapes:
@@ -159,8 +175,9 @@ class blendShapesApplyOperator(Operator):
     def execute(self, context):
         print("apply blendshapes")
         
+        scene = context.scene
         # read file
-        with open(G.folder_loc + 'blendShapes.json', 'r') as myfile:
+        with open(bpy.path.abspath(scene.my_tool.folderPath)+ 'blendShapes.json', 'r') as myfile:
             data=myfile.read()
 
         # parse file
@@ -169,10 +186,11 @@ class blendShapesApplyOperator(Operator):
 
         obj = context.object
         shape_keys = obj.data.shape_keys.key_blocks
-
+        scene = context.scene
+        
         for blendShap in move:
 
-            frame = 0;
+            frame = scene.my_tool.startFrame;
 
             for v in move[blendShap]:
                 shape_keys[blendShap].value = v
@@ -188,22 +206,29 @@ class headOperator(Operator):
     def execute(self, context):
         print("head")
         
+        
+        
+        scene = context.scene
+
+        print (bpy.path.abspath(scene.my_tool.folderPath) )
+        
         # read file
-        with open(G.folder_loc + 'head.json', 'r') as myfile:
+        with open(bpy.path.abspath(scene.my_tool.folderPath)+ 'head.json', 'r') as myfile:
             data=myfile.read()
         
         # parse file
         move = json.loads(data)
         obj = context.object
+        scene = context.scene
         
-        frame = 0;
+        frame = scene.my_tool.startFrame
                     
 
         for m in move:
             obj.rotation_euler = [-m[2], -m[1], m[0]]
             obj.keyframe_insert('rotation_euler', frame=frame)
             frame += 1
-                
+        
         return {'FINISHED'}
     
 class leftEyeOperator(Operator):
@@ -213,15 +238,17 @@ class leftEyeOperator(Operator):
     def execute(self, context):
         print("leftEye")
         
+        scene = context.scene
         # read file
-        with open(G.folder_loc + 'leftEye.json', 'r') as myfile:
+        with open(bpy.path.abspath(scene.my_tool.folderPath)+ 'leftEye.json', 'r') as myfile:
             data=myfile.read()
         
         # parse file
         move = json.loads(data)
         obj = context.object
+        scene = context.scene
         
-        frame = 0;
+        frame = scene.my_tool.startFrame
     
             
         for m in move:
@@ -238,15 +265,18 @@ class rightEyeOperator(Operator):
     def execute(self, context):
         print("rightEye")
         
+        scene = context.scene
         # read file
-        with open(G.folder_loc + 'rightEye.json', 'r') as myfile:
+        with open(bpy.path.abspath(scene.my_tool.folderPath) + 'rightEye.json', 'r') as myfile:
             data=myfile.read()
         
         # parse file
         move = json.loads(data)
         obj = context.object
+        scene = context.scene
         
-        frame = 0;
+        frame = scene.my_tool.startFrame
+    
      
         for m in move:
             obj.rotation_euler = [m[2], m[1], m[0]]
@@ -295,14 +325,28 @@ class BodyAnchorMotionOperator(Operator):
         obj = context.object
         obj.rotation_mode = 'YZX'
         
+        scene = context.scene
+
         # read file
-        with open(G.folder_loc + 'motcap.json', 'r') as myfile:
+        with open(bpy.path.abspath(scene.my_tool.folderPath)+ 'motcap.json', 'r') as myfile:
             data=myfile.read()
         
         # parse file
         move = json.loads(data)
+        scene = context.scene
+        frame = scene.my_tool.startFrame
         
-        frame = 0;
+        originaLocation = [ -move[0][15][0],move[0][15][2],move[0][15][1]]
+        
+        zOffset = -move[0][1][2]
+        
+        if zOffset > -move[0][3][2]:
+            zOffset = -move[0][3][2]
+        offset = [0,0, -zOffset * 10 + .2]
+        
+        #print(originaLocation)
+        #return {'FINISHED'}
+    
         for f in move:
             
             joint = 0
@@ -317,7 +361,9 @@ class BodyAnchorMotionOperator(Operator):
                     
                     
                 elif (joint == 15):
-                    obj.location = [ -b[0],b[2],b[1]]
+                    obj.location = [ -b[0] - originaLocation[0] + offset[0],
+                        b[2]- originaLocation[1] + offset[1],
+                        b[1] - originaLocation[2] + offset[2]]
                     obj.keyframe_insert('location', frame=frame)
                 elif (joint == 16):
                     obj.rotation_euler = [b[2], -b[1], -b[0]]
@@ -354,6 +400,11 @@ class createMotoSkelOperator(Operator):
     
     def execute(self, context):
         print("skeleton")
+        
+        
+        bpy.ops.object.empty_add(type='ARROWS', align='WORLD', radius=0.5, location=(0, 0, 0), rotation=(0, 0, 0))
+        motoOffset = context.object
+        motoOffset.name = "motoOffset"
 
         bpy.ops.object.armature_add(enter_editmode=True, location=(0, 0, 0))
         obj = context.object
@@ -386,8 +437,9 @@ class createMotoSkelOperator(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         
         # make the custom bone shape
-        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.2, enter_editmode=False, location=(0.0, 0.0, 0.0))
-        
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.05, enter_editmode=False, location=(0.0, 0.0, -1.0))
+        bpy.ops.object.hide_view_set(unselected=False)
+
         customShape = context.object
         customShape.name = "jointCustomShape"
 
@@ -397,45 +449,79 @@ class createMotoSkelOperator(Operator):
         for i in range(0, (boneSize + 2)):
             # use pose.bones for custom shape
             obj.pose.bones['joint'+ str(i)].custom_shape = customShape
+            obj.pose.bones['joint'+ str(i)].use_custom_shape_bone_size = False
+
             # use data.bones for show_wire
             #obj.data.bones['bone2'].show_wire = True
         
+        obj.parent =  motoOffset
+        customShape.parent = motoOffset
+
     
         return {'FINISHED'}
+
+class apply_sound(Operator):
+    bl_idname = "apply.sound"
+    bl_label = "apply sound"
+    
+    def execute(self, context):
+        print("apply sound")
+        
+        scene = context.scene
+        if not scene.sequence_editor:
+            scene.sequence_editor_create()
+        
+        
+        bpy.context.scene.sync_mode = 'AUDIO_SYNC'
+        
+        if scene.my_tool.folderPath != "":
+            soundstrip = scene.sequence_editor.sequences.new_sound("audio", scene.my_tool.folderPath + 'audio.wav', 2, scene.my_tool.startFrame )
+        
+        
+        return {'FINISHED'}
+
 
 
 class IphoneMotionCapture(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Iphone Motion Capture"
-    bl_idname = "OBJECT_Motion_Capture"
+    bl_idname = "OBJECT_PT_MotionCapture"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
 
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene
         obj = context.object
-        row = layout.row()
         
-        
-        row.operator("get.folder")
-        row = layout.row()
-        
-        row.label(text="folder: " + G.folder_loc)
+        mytool = scene.my_tool
         
         row = layout.row()
+        layout.prop(mytool, "startFrame")
+
+        row = layout.row()
         
-        row.label(text="Active object is: " + obj.name)
+        layout.prop(mytool, "folderPath")
+        
+        row = layout.row()
+        
+        try:
+            row.label(text="Active object is: " + obj.name)
+        except Exception:
+            row.label(text="NO object is selected!!")
         
         row = layout.row()
         
         row.label(text="------------ FACE ---------------------")
         row = layout.row()
-
-
+        row.operator("apply.sound")
+        row = layout.row()
         
-        row.label(text="BlendShapes:")
+        #layout.prop(mytool, "blendShapeType")
+        #row = layout.row()
+        
+        row.label(text= scene.my_tool.blendShapeType  + " BlendShapes:")
         row = layout.row()
         row.operator("check.blendshapes")
         row = layout.row()
@@ -470,27 +556,35 @@ def register():
     bpy.utils.register_class(blendShapesCheckOperator)
     bpy.utils.register_class(blendShapesApplyOperator)
     
-    bpy.utils.register_class(getFolderOperator)
-    
     
     bpy.utils.register_class(BodyAnchorMotionOperator)
     bpy.utils.register_class(createMotoSkelOperator)
     
+    bpy.utils.register_class(apply_sound)
+    
+    bpy.utils.register_class(G)
+    
+    bpy.types.Scene.my_tool = PointerProperty(type=G)
     
 def unregister():
-    bpy.utils.unregister_class(IphoneMotionCapture)
+
     bpy.utils.unregister_class(headOperator)
     bpy.utils.unregister_class(leftEyeOperator)
     bpy.utils.unregister_class(rightEyeOperator)
     bpy.utils.unregister_class(blendShapesCheckOperator)
     bpy.utils.unregister_class(blendShapesApplyOperator)
     
-    bpy.utils.unregister_class(getFolderOperator)
     
     bpy.utils.unregister_class(BodyAnchorMotionOperator)
     bpy.utils.unregister_class(createMotoSkelOperator)
- 
+
+    bpy.utils.unregister_class(apply_sound)
+    
+    bpy.utils.unregister_class(G)
+    
+    del bpy.types.Scene.my_tool
     
 
 if __name__ == "__main__":
     register()
+
