@@ -185,6 +185,11 @@ class createMotoSkelOperator(Operator):
         b.tail = (-0.455,0,0)
         b.head = (0,0,0)
 
+        b = edit_bones.new('bone18')
+        b.tail = (-0.179,0,0)
+        b.head = (0,0,0)
+        
+        
         # exit edit mode to save bones so they can be used in pose mode
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.posemode_toggle()
@@ -224,9 +229,10 @@ class createMotoSkelOperator(Operator):
         crc.target = obj
         crc.subtarget = "joint15"
 
-        crc = obj.pose.bones['bone3'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone3'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint4"
+        crc.use_target_z = True
 
 
 
@@ -234,54 +240,82 @@ class createMotoSkelOperator(Operator):
         crc.target = obj
         crc.subtarget = "joint4"
 
-        crc = obj.pose.bones['bone4'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone4'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint11"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone5'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint5"
 
-        crc = obj.pose.bones['bone5'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone5'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint6"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone6'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint11"
 
-        crc = obj.pose.bones['bone6'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone6'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint12"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone7'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint4"
 
-        crc = obj.pose.bones['bone7'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone7'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint5"
+        crc.use_target_z = True
 
+
+
+
+        crc = obj.pose.bones['bone8'].constraints.new('COPY_ROTATION')
+        crc.target = obj
+        crc.subtarget = "bone9"
+        crc.target_space = 'POSE'
+        crc.owner_space = 'POSE'
 
         crc = obj.pose.bones['bone8'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint9"
 
-        crc = obj.pose.bones['bone8'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone8'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint10"
+        crc.use_target_z = True
+
+
+
+
+        crc = obj.pose.bones['bone9'].constraints.new('COPY_ROTATION')
+        crc.target = obj
+        crc.subtarget = "bone18"
+        crc.use_x = False
+        crc.use_y = False
+
+        crc.target_space = 'POSE'
+        crc.owner_space = 'POSE'
+
 
 
         crc = obj.pose.bones['bone9'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint4"
 
-        crc = obj.pose.bones['bone9'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone9'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint9"
+        crc.use_target_z = True
+
+
+
+
 
 
 
@@ -289,71 +323,85 @@ class createMotoSkelOperator(Operator):
         crc.target = obj
         crc.subtarget = "joint6"
 
-        crc = obj.pose.bones['bone10'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone10'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint7"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone11'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint7"
 
-        crc = obj.pose.bones['bone11'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone11'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint8"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone12'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint12"
 
-        crc = obj.pose.bones['bone12'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone12'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint13"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone13'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint13"
 
-        crc = obj.pose.bones['bone13'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone13'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint14"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone14'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint17"
 
-        crc = obj.pose.bones['bone14'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone14'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint0"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone15'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint16"
 
-        crc = obj.pose.bones['bone15'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone15'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint2"
-
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone16'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint0"
 
-        crc = obj.pose.bones['bone16'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone16'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint1"
+        crc.use_target_z = True
 
         crc = obj.pose.bones['bone17'].constraints.new('COPY_LOCATION')
         crc.target = obj
         crc.subtarget = "joint2"
 
-        crc = obj.pose.bones['bone17'].constraints.new('DAMPED_TRACK')
+        crc = obj.pose.bones['bone17'].constraints.new('TRACK_TO')
         crc.target = obj
         crc.subtarget = "joint3"
+        crc.use_target_z = True
+
+
+
+        crc = obj.pose.bones['bone18'].constraints.new('COPY_LOCATION')
+        crc.target = obj
+        crc.subtarget = "joint5"
+
+        crc = obj.pose.bones['bone18'].constraints.new('TRACK_TO')
+        crc.target = obj
+        crc.subtarget = "joint11"
+        crc.use_target_z = True
+
 
 
         obj.parent =  motoOffset
