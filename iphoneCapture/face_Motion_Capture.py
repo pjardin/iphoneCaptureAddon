@@ -187,17 +187,17 @@ class createMotoFaceRig(Operator):
             filename=filename,
             directory=directory)
             
-        selected_objects = [ o for o in bpy.context.scene.objects if o.select ]
+        #selected_objects = [ o for o in bpy.context.scene.objects if o.select ]
         
         
         arm = bpy.context.scene.objects['motoFaceRig']
-
+        """
         for s in selected_objects:
             if "motoFaceRig" not in s.name:
                 s.hide = True
             else:
                 arm = s
-
+        """
         for d in applyMotoDrivers:
 
             meshShapeKey = objMesh.data.shape_keys.key_blocks[d[0]]

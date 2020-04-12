@@ -32,6 +32,7 @@ from bpy.types import (Panel,
                        PropertyGroup,
                        )
 
+from . import face_Bone_Motion_Capture
 from . import face_Motion_Capture
 from . import body_Motion_Capture
 from . import BMC
@@ -78,7 +79,66 @@ class Blender_Motion_Capture_Panel(Panel):
         
         row.operator("apply.sound")
         row = layout.row()
-    
+  
+class Face_Motion_Capture_Pose_Library_Panel(Panel):
+  bl_label = "Face Pose Library"
+  bl_idname = "OBJECT_PT_Pose_Library_panel"
+  bl_space_type = "VIEW_3D"
+  bl_region_type = "UI"
+  bl_category = "BMC"
+  bl_context = "objectmode"
+
+  """
+  @classmethod
+  def poll(self,context):
+      return context.object is not None
+  """
+
+  def draw(self, context):
+      layout = self.layout
+      scene = context.scene
+      mytool = scene.my_tool
+
+
+      row = layout.row()
+      row.label(text="generate poses:")
+      row = layout.row()
+      row.operator("create.poslib_moto")
+      row = layout.row()
+      row.label(text="assign face rig to rig")
+      row = layout.row()
+      row.operator("create.poslib_moto_face_rig")
+          
+class Face_Motion_Capture_Shape_Keys_Panel(Panel):
+    bl_label = "Face Shape Keys"
+    bl_idname = "OBJECT_PT_Shape_Keys_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "BMC"
+    bl_context = "objectmode"
+
+    """
+    @classmethod
+    def poll(self,context):
+        return context.object is not None
+    """
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        mytool = scene.my_tool
+
+
+        row = layout.row()
+        row.label(text="Shape Keys:")
+        row = layout.row()
+        row.operator("check.blendshapes")
+        row = layout.row()
+        row.label(text="assign rig to mesh")
+        row = layout.row()
+        row.operator("create.moto_face_rig")
+
+  
 class Face_Motion_Capture_Panel(Panel):
     bl_label = "Face Motion Capture"
     bl_idname = "OBJECT_PT_custom_panel"
@@ -100,15 +160,7 @@ class Face_Motion_Capture_Panel(Panel):
 
 
         row = layout.row()
-        row.label(text="1) Shape Keys:")
-        row = layout.row()
-        row.operator("check.blendshapes")
-        row = layout.row()
-        row.label(text="2) assign rig to mesh")
-        row = layout.row()
-        row.operator("create.moto_face_rig")
-        row = layout.row()
-        row.label(text="3) apply moto to rig")
+        row.label(text="apply moto to rig")
         row = layout.row()
         row.operator("apply.blendshapes")
         row = layout.row()
@@ -148,6 +200,8 @@ class Body_Motion_Capture_Panel(Panel):
 # ------------------------------------------------------------------------
 
 classes = (
+    Face_Motion_Capture_Pose_Library_Panel,
+    Face_Motion_Capture_Shape_Keys_Panel,
     Face_Motion_Capture_Panel,
     Body_Motion_Capture_Panel,
     body_Motion_Capture.BodyAnchorMotionOperator,
@@ -158,6 +212,9 @@ classes = (
     face_Motion_Capture.headOperator,
     face_Motion_Capture.leftEyeOperator,
     face_Motion_Capture.rightEyeOperator,
+    
+    face_Bone_Motion_Capture.createPoslibMotoFaceRig,
+    face_Bone_Motion_Capture.poslibCreateOperator,
     
     Blender_Motion_Capture_Panel,
     BMC.G,
