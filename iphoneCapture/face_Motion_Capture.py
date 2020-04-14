@@ -217,6 +217,13 @@ class blendShapesCheckOperator(Operator):
         print("check/generate blendshapes")
         obj = context.object
     
+        shape_keys = []
+
+        try:
+            shape_keys = obj.data.shape_keys.key_blocks
+        except Exception:
+            bpy.ops.object.shape_key_add(from_mix=False)
+    
         shape_keys = obj.data.shape_keys.key_blocks
 
         missingShapes = []
