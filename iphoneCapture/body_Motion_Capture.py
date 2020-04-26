@@ -7,6 +7,268 @@ import bmesh
 from bpy import context
 
 
+
+def set_inverse(pbone):
+
+    context_copy = bpy.context.copy()
+    context_copy["constraint"] = pbone.constraints["Child Of"]
+    bpy.context.active_object.data.bones.active = pbone.bone
+    bpy.ops.constraint.childof_set_inverse(context_copy, constraint="Child Of", owner='BONE')
+
+class ConnectMotionOperator(Operator):
+    bl_idname = "connect.body_anchor"
+    bl_label = "connect"
+
+    def execute(self, context):
+
+        scene = context.scene
+
+        selected = bpy.context.selected_objects
+
+        BMC = context.object # has to be first object selected!!!
+        arm = context.object
+
+
+        for obj in selected:
+            
+            if "tracked points" in obj.name:
+                BMC = obj
+
+
+        arm.parent = BMC
+        arm.matrix_parent_inverse = BMC.matrix_world.inverted()
+
+
+        #=======================================
+        edit_bones = arm.data.edit_bones
+
+
+        bpy.ops.object.editmode_toggle()
+
+        where = arm.pose.bones["shoulder.R"].tail
+
+        b = edit_bones.new('track1')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+
+        where = arm.pose.bones["shoulder.L"].tail
+
+        b = edit_bones.new('track2')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["upper_arm.R"].tail
+
+        b = edit_bones.new('track3')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["upper_arm.L"].tail
+
+        b = edit_bones.new('track4')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["forearm.R"].tail
+
+        b = edit_bones.new('track5')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["forearm.L"].tail
+
+        b = edit_bones.new('track6')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["thigh.R"].tail
+
+        b = edit_bones.new('track7')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["thigh.L"].tail
+
+        b = edit_bones.new('track8')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["shin.R"].tail
+
+        b = edit_bones.new('track9')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["shin.L"].tail
+
+        b = edit_bones.new('track10')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["spine_lower"].tail
+
+        b = edit_bones.new('track11')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["spine_upper"].tail
+
+        b = edit_bones.new('track12')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        where = arm.pose.bones["neck"].tail
+
+        b = edit_bones.new('track13')
+        b.head = where
+        b.tail = (where.x, where.y, where.z + 0.1)
+
+        bpy.ops.object.editmode_toggle()
+        #=======================================
+
+
+        #=======================================
+        crc = arm.pose.bones['shoulder.R'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track1"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track1'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint12"
+        set_inverse(arm.pose.bones["track1"])
+
+
+        crc = arm.pose.bones['shoulder.L'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track2"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track2'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint6"
+        set_inverse(arm.pose.bones["track2"])
+        #=======================================
+        crc = arm.pose.bones['upper_arm.R'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track3"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track3'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint13"
+        set_inverse(arm.pose.bones["track3"])
+
+        crc = arm.pose.bones['upper_arm.L'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track4"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track4'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint7"
+        set_inverse(arm.pose.bones["track4"])
+        #=======================================
+        crc = arm.pose.bones['forearm.R'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track5"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track5'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint14"
+        set_inverse(arm.pose.bones["track5"])
+
+        crc = arm.pose.bones['forearm.L'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track6"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track6'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint8"
+        set_inverse(arm.pose.bones["track6"])
+        #=======================================
+        crc = arm.pose.bones['thigh.R'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track7"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track7'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint2"
+        set_inverse(arm.pose.bones["track7"])
+
+        crc = arm.pose.bones['thigh.L'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track8"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track8'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint0"
+        set_inverse(arm.pose.bones["track8"])
+        #=======================================
+        crc = arm.pose.bones['shin.R'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track9"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track9'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint3"
+        set_inverse(arm.pose.bones["track9"])
+
+        crc = arm.pose.bones['shin.L'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track10"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track10'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint1"
+        set_inverse(arm.pose.bones["track10"])
+        #=======================================
+        crc = arm.pose.bones['spine_lower'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track11"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track11'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint4"
+        set_inverse(arm.pose.bones["track11"])
+
+        crc = arm.pose.bones['spine_upper'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track12"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track12'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint9"
+        set_inverse(arm.pose.bones["track12"])
+
+        crc = arm.pose.bones['neck'].constraints.new('TRACK_TO')
+        crc.target = arm
+        crc.subtarget = "track13"
+        crc.use_target_z = True
+
+        crc = arm.pose.bones['track13'].constraints.new('CHILD_OF')
+        crc.target = BMC
+        crc.subtarget = "joint10"
+        set_inverse(arm.pose.bones["track13"])
+        #=======================================
+
+
+
+
+
+
+        return {'FINISHED'}
+
+
 class BodyAnchorMotionOperator(Operator):
     bl_idname = "apply.body_anchor"
     bl_label = "apply"
@@ -25,20 +287,20 @@ class BodyAnchorMotionOperator(Operator):
         # parse file
         move = json.loads(data)
         scene = context.scene
-        frame = scene.my_tool.startFrame
+        frame = 0
         
-        originaLocation = [ -move[0][15][0],move[0][15][2],move[0][15][1]]
+        originaLocation = [ -move["moto"][0][15][0],move["moto"][0][15][2],move["moto"][0][15][1]]
         
-        zOffset = -move[0][1][2]
+        zOffset = -move["moto"][0][1][2]
         
-        if zOffset > -move[0][3][2]:
-            zOffset = -move[0][3][2]
+        if zOffset > -move["moto"][0][3][2]:
+            zOffset = -move["moto"][0][3][2]
         offset = [0,0, -zOffset * 10 + .2]
         
         #print(originaLocation)
         #return {'FINISHED'}
     
-        for f in move:
+        for f in move["moto"]:
             
             joint = 0
             
@@ -47,18 +309,18 @@ class BodyAnchorMotionOperator(Operator):
                 if (joint < 15):
                     bone = obj.pose.bones['joint'+ str(joint)]
                       
-                    bone.location = [-b[0],b[1],-b[2]]
-                    bone.keyframe_insert('location', frame=frame)
+                    bone.location = [-b[0] / 100000,b[1] / 100000,-b[2] / 100000]
+                    bone.keyframe_insert('location', frame=move["frame"][frame][0][0] + scene.my_tool.startFrame)
                     
                     
                 elif (joint == 15):
-                    obj.location = [ -b[0] - originaLocation[0] + offset[0],
-                        b[2]- originaLocation[1] + offset[1],
-                        b[1] - originaLocation[2] + offset[2]]
-                    obj.keyframe_insert('location', frame=frame)
+                    obj.location = [ (-b[0] - originaLocation[0] + offset[0]) / 100000,
+                        (b[2]- originaLocation[1] + offset[1]) / 100000,
+                        (b[1] - originaLocation[2] + offset[2]) / 100000]
+                    obj.keyframe_insert('location', frame=move["frame"][frame][0][0] + scene.my_tool.startFrame)
                 elif (joint == 16):
-                    obj.rotation_euler = [b[2], -b[1], -b[0]]
-                    obj.keyframe_insert('rotation_euler', frame=frame)
+                    obj.rotation_euler = [b[2] / 100, -b[1] / 100, -b[0] / 100]
+                    obj.keyframe_insert('rotation_euler', frame= move["frame"][frame][0][0] + scene.my_tool.startFrame)
 
                 joint +=1
 
@@ -406,6 +668,20 @@ class createMotoSkelOperator(Operator):
 
         obj.parent =  motoOffset
         customShape.parent = motoOffset
+
+
+        joint = 0
+        
+        t_pose = [[12, -43, 11], [10, -88, 3], [-13, -44, 9], [-13, -88, -1], [0, 44, 0], [8, 55, 1], [23, 54, 2], [49, 56, -3], [74, 57, 8], [-1, 57, 1], [-1, 72, 5], [-10, 55, 0], [-24, 53, 1], [-50, 59, 1], [-74, 65, 12], [-34, -14, -313], [19, -3, -18]]
+                   
+        for b in t_pose:
+
+            if (joint < 15):
+                bone = obj.pose.bones['joint'+ str(joint)]
+
+                bone.location = [-b[0] / 100,b[1] / 100,-b[2] / 100]
+
+            joint +=1
 
     
         return {'FINISHED'}

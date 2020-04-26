@@ -192,8 +192,14 @@ class Body_Motion_Capture_Panel(Panel):
         layout = self.layout
         scene = context.scene
         mytool = scene.my_tool
-        layout.operator("apply.body_anchor")
         layout.operator("create.mot_skel")
+        layout.operator("apply.body_anchor")
+        row = layout.row()
+
+        row.label(text="arm need to have shoulder.R, shoulder.L, upper_arm.R, upper_arm.L, forearm.R, forearm.L, thigh.R, thigh.L, shin.R, shin.L, spine_lower, spine_upper, neck")
+
+        layout.operator("connect.body_anchor")
+
         
 # ------------------------------------------------------------------------
 #    Registration
@@ -206,6 +212,7 @@ classes = (
     Body_Motion_Capture_Panel,
     body_Motion_Capture.BodyAnchorMotionOperator,
     body_Motion_Capture.createMotoSkelOperator,
+    body_Motion_Capture.ConnectMotionOperator,
     
     face_Motion_Capture.blendShapesCheckOperator,
     face_Motion_Capture.blendShapesApplyOperator,

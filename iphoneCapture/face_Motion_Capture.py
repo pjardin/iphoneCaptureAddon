@@ -317,7 +317,7 @@ class blendShapesApplyOperator(Operator):
         
 
         for mb in motoBone:
-            frame = scene.my_tool.startFrame;
+            frame = 0;
             print( mb[0] + " " + str(mb[1]) +str(len(move[mb[0]])) )
 
             for m in move[mb[0]]:
@@ -338,7 +338,7 @@ class blendShapesApplyOperator(Operator):
 
                 bone.location = location
                     
-                bone.keyframe_insert('location', frame=frame)
+                bone.keyframe_insert('location', frame= move["frame"][frame][0] + scene.my_tool.startFrame)
                 
                 
                 frame += 1
@@ -379,12 +379,12 @@ class headOperator(Operator):
         obj = context.object
         scene = context.scene
         
-        frame = scene.my_tool.startFrame
+        frame = 0
                     
 
-        for m in move:
-            obj.rotation_euler = [-m[2], -m[1], m[0]]
-            obj.keyframe_insert('rotation_euler', frame=frame)
+        for m in move["head"]:
+            obj.rotation_euler = [-m[2] / 100, -m[1] / 100, m[0] / 100]
+            obj.keyframe_insert('rotation_euler', frame=move["frame"][frame][0] + scene.my_tool.startFrame)
             frame += 1
         
         return {'FINISHED'}
@@ -406,12 +406,12 @@ class leftEyeOperator(Operator):
         obj = context.object
         scene = context.scene
         
-        frame = scene.my_tool.startFrame
+        frame = 0
     
             
-        for m in move:
-            obj.rotation_euler = [m[2], m[1], m[0]]
-            obj.keyframe_insert('rotation_euler', frame=frame)
+        for m in move["eye"]:
+            obj.rotation_euler = [-m[2] / 100, -m[1] / 100, m[0] / 100]
+            obj.keyframe_insert('rotation_euler', frame=move["frame"][frame][0] + scene.my_tool.startFrame)
             frame += 1
         
         return {'FINISHED'}
@@ -433,12 +433,12 @@ class rightEyeOperator(Operator):
         obj = context.object
         scene = context.scene
         
-        frame = scene.my_tool.startFrame
+        frame = 0
     
      
-        for m in move:
-            obj.rotation_euler = [m[2], m[1], m[0]]
-            obj.keyframe_insert('rotation_euler', frame=frame)
+        for m in move["eye"]:
+            obj.rotation_euler = [-m[2] / 100, -m[1] / 100, m[0] / 100]
+            obj.keyframe_insert('rotation_euler', frame=move["frame"][frame][0] + scene.my_tool.startFrame)
             frame += 1
         
         return {'FINISHED'}
