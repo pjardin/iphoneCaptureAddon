@@ -128,11 +128,12 @@ class ConnectMotionOperator(Operator):
         #=======================================
 
 
+        #Damped Track
         #=======================================
-        crc = arm.pose.bones['shoulder.R'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['shoulder.R'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track1"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track1'].constraints.new('CHILD_OF')
         crc.target = BMC
@@ -140,130 +141,126 @@ class ConnectMotionOperator(Operator):
         set_inverse(arm.pose.bones["track1"])
 
 
-        crc = arm.pose.bones['shoulder.L'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['shoulder.L'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track2"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track2'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint6"
         set_inverse(arm.pose.bones["track2"])
         #=======================================
-        crc = arm.pose.bones['upper_arm.R'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['upper_arm.R'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track3"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track3'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint13"
         set_inverse(arm.pose.bones["track3"])
 
-        crc = arm.pose.bones['upper_arm.L'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['upper_arm.L'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track4"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track4'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint7"
         set_inverse(arm.pose.bones["track4"])
         #=======================================
-        crc = arm.pose.bones['forearm.R'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['forearm.R'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track5"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track5'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint14"
         set_inverse(arm.pose.bones["track5"])
 
-        crc = arm.pose.bones['forearm.L'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['forearm.L'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track6"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track6'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint8"
         set_inverse(arm.pose.bones["track6"])
         #=======================================
-        crc = arm.pose.bones['thigh.R'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['thigh.R'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track7"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track7'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint2"
         set_inverse(arm.pose.bones["track7"])
 
-        crc = arm.pose.bones['thigh.L'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['thigh.L'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track8"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track8'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint0"
         set_inverse(arm.pose.bones["track8"])
         #=======================================
-        crc = arm.pose.bones['shin.R'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['shin.R'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track9"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track9'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint3"
         set_inverse(arm.pose.bones["track9"])
 
-        crc = arm.pose.bones['shin.L'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['shin.L'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track10"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track10'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint1"
         set_inverse(arm.pose.bones["track10"])
         #=======================================
-        crc = arm.pose.bones['spine_lower'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['spine_lower'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track11"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track11'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint4"
         set_inverse(arm.pose.bones["track11"])
 
-        crc = arm.pose.bones['spine_upper'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['spine_upper'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track12"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track12'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint9"
         set_inverse(arm.pose.bones["track12"])
 
-        crc = arm.pose.bones['neck'].constraints.new('TRACK_TO')
+        crc = arm.pose.bones['neck'].constraints.new('DAMPED_TRACK')
         crc.target = arm
         crc.subtarget = "track13"
-        crc.use_target_z = True
+        #crc.use_target_z = True
 
         crc = arm.pose.bones['track13'].constraints.new('CHILD_OF')
         crc.target = BMC
         crc.subtarget = "joint10"
         set_inverse(arm.pose.bones["track13"])
         #=======================================
-
-
-
-
 
 
         return {'FINISHED'}
